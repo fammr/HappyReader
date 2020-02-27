@@ -1,0 +1,135 @@
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1, maximum-scale=1,minimum-scale=1, user-scalable=no">
+    <meta name="format-detection" content="telephone=no"/>
+    <meta name="apple-mobile-web-app-capable" content="yes"/>
+    <title>快乐书屋</title>
+    <!--<script src="/static/js/jquery-3.1.1.min.js"></script>-->
+    <script src="/static/js/jquery-1.11.3.min.js"></script>
+
+    <!--
+        <script src="/static/js/laydate/laydate.js"></script>
+    -->
+    <script src="/static/js/util.js"></script>
+    <style>
+        div,a,p,ul,li,span,input{margin: 0;padding: 0;list-style: none;}
+        .content{font-size: 0.16rem;}
+        .search-cont{text-align: center;border-bottom: 0.02rem solid #ddd;padding: 0.2rem;height: 0.8rem;line-height: 0.8rem;}
+        .search-bar{
+            width: 5rem;
+            border: 0.01rem solid #333;
+            outline: none;
+            height: 0.8rem;
+            padding-left: 0.2rem;
+            font-size: 0.28rem;}
+        .search-btn{width: 1rem;height: 0.8rem;line-height: 0.8rem;;font-size: 0.28rem;display: inline-block;
+            background: #ccc;text-align: center;color: #333; }
+        .book-name{
+            margin-top: 0.4rem;
+        }
+        .book-title{font-size: 0.4rem;
+            padding-left: 0.2rem;
+            font-weight: bold;
+            color: #294175;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
+        .book-info{
+            font-size: 0.28rem;
+            border-bottom: 1px solid #ccc;
+            overflow: auto;
+            clear: both;
+            height: 0.8rem;
+            line-height: 0.8rem;}
+        .book-info span{
+            margin-left: 0.2rem;
+            width: 1.5rem;
+            float: left;}
+        .book-info p{float: left;}
+        .read-btn{width: 1.2rem;
+            height: 0.5rem;
+            background: #7988b3;
+            border-radius: 50px;
+            margin-left: 0.16rem;
+            text-align: center;
+            margin-top: 0.15rem;
+            line-height: 0.5rem;
+            color: #fff;
+            float: left;
+            font-size: 0.22rem;}
+        .no-see{background: #878787;}
+        .book-brif{line-height: 150%;
+            font-size: 0.22rem;
+            padding: 0.2rem;}
+        .book-brif span{font-size: 0.26rem;}
+        .book-brif div{margin-top: 0.2rem;}
+    </style>
+</head>
+<body class="content">
+<div class="search-cont">
+    <input class="search-bar"id="search-word" type="text" placeholder="请输入书名或作者">
+    <span class="search-btn" id="search-btn">检索</span>
+</div>
+<div id="book" class="book-name">
+    <div class="book-title" id="book_name"></div>
+    <div class="book-info">
+        <span>作者 ：</span><p id="author"></p>
+    </div>
+   <div class="book-info">
+       <span>总页数 ：</span><p id="pages"></p>
+   </div>
+    <div class="book-info">
+        <div class="read-btn" onclick="read()">阅读</div>
+        <div class="read-btn no-see">下载</div>
+        <div class="read-btn no-see">加入书架</div>
+    </div>
+    <div class="book-brif">
+        <pan>简介：</pan> <div id="brief"></div>
+    </div>
+
+</div>
+
+
+</body>
+</html>
+<script>
+    var url="/static/img/"+randomNum(1,7)+".jpg";
+    document.body.style.backgroundImage="url("+url+")";//
+    document.body.style.backgroundRepeat='no-repeat';
+    document.body.style.backgroundSize='cover';
+
+    book(1,0);
+
+    function book() {
+        var id=getQueryVariable('id');
+        $.ajax({
+            url: '/bookdetail',
+            type : "post",
+            data : {id:id},
+            dataType: "json",
+            success: function (data) {
+              $('#book_name').html(data.bookName);
+              $('#author').html(data.author);
+              $('#pages').html(data.pages);
+              $('#brief').html(data.brief);
+            }
+        });
+    }
+
+    function read() {
+        var id=getQueryVariable('id');
+       // window.open( "/read?id="+id+"&page=1") ;
+        window.location.href= "/read?id="+id+"&page=1";
+    }
+
+    $('#search-btn').click(function () {
+        var keyword=$("#search-word").val();
+        if(keyword==''||keyword==undefined){
+            alert('请输入检索词');
+            return
+        }
+        window.location.href="/search?keyword="+keyword;
+    });
+</script>

@@ -1,0 +1,105 @@
+<html>
+<head>
+    <meta content="text/html;charset=UTF-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1, maximum-scale=1,minimum-scale=1, user-scalable=no">
+    <meta name="format-detection" content="telephone=no"/>
+    <meta name="apple-mobile-web-app-capable" content="yes"/>
+    <title>快乐书屋</title>
+    <script src="/static/js/jquery-3.1.1.min.js"></script>
+    <script src="/static/js/laydate/laydate.js"></script>
+    <script src="/static/js/util.js"></script>
+    <style>
+        .content{
+            font-size: 0.3rem;
+            padding: 0.24rem;
+            line-height: 140%;
+            background: #dedcd2;
+        }
+        .read-foot{
+            font-size: 0.24rem;
+            background: #eaeaea;
+            text-align: center;
+            padding-top: 0.35rem;
+            padding-bottom: 1rem;
+        }
+        .read-foot .btn{
+            width: 1rem;
+            height: 0.5rem;
+            line-height: 0.5rem;
+            margin-top: 0.5rem;
+            background: #ddd;
+            text-align: center;
+            font-size: 0.22rem;
+            color: #333;
+            margin-right: 0.2rem;
+            display: inline-block;
+        }
+        /*.ad{*/
+            /*height:1rem;background: #ddd;*/
+        /*}*/
+        .skip-btn{
+            width: 1rem;
+            height: 0.5rem;
+            line-height: 0.5rem;
+            display: inline-block;
+            margin-left: 0.2rem;
+            background: #294175;
+            color: #fff;
+        }
+        .page-num{width:1rem;}
+          </style>
+</head>
+<body>
+    <div class="content" id="content"></div>
+    <div class="read-foot">
+        当前第 <span class="current" id="current">1</span> 页 <div class="btn" onclick="pre()">上一页</div><div class="btn" onclick="next()">下一页</div>
+        <input class="page-num" id="page-num" onkeyup="value=value.replace(/[^\d]/g,'')" type="text"><div class="skip-btn" onclick="skip()">跳转</div>
+    </div>
+    <!--<div class="ad">-->
+    <!--</div>-->
+</body>
+</html>
+<script>
+
+    read();
+
+    function read() {
+        var id=getQueryVariable('id');
+        var page=getQueryVariable('page');
+        $.ajax({
+            url: '/content',
+            type : "post",
+            data : {id:id,page:page},
+            dataType: "json",
+            success: function (data) {
+                $('#content').html(data.content);
+                $('#current').html(page);
+            }
+        });
+    }
+    function next() {
+        var id=getQueryVariable('id');
+        var page=getQueryVariable('page');
+        page=parseInt(page)+1;
+        window.location.href= "/read?id="+id+"&page="+page;
+    }
+    function pre() {
+        var id=getQueryVariable('id');
+        var page=getQueryVariable('page');
+        page=parseInt(page)-1;
+        if(page<1){
+            page=1;
+        }
+        window.location.href= "/read?id="+id+"&page="+page;
+    }
+    function skip() {
+        var id=getQueryVariable('id');
+        var page=$("#page-num").val();
+        if(page==undefined||page==""){
+            return;
+        }
+        window.location.href= "/read?id="+id+"&page="+page;
+    }
+
+</script>
